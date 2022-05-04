@@ -10,15 +10,15 @@ module.exports = {
     hardhat: {
       saveDeployments: false,
     },
-    bscTest: {
-      url: process.env.BSC_TEST,
+    polygonMumbai: {
+      url: process.env.POLY_URL,
       accounts: [process.env.PK],
     },
   },
 
   etherscan: {
     apiKey: {
-      bscTestnet: process.env.BSC_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
     },
   },
 

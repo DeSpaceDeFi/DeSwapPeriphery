@@ -7,7 +7,7 @@ async function main() {
   console.log(`WBNB deployed to: ${wBNB.address}`);
 
   const deSwapRouter = await DeSwapRouter.deploy(
-    "0x2FB7d11E299F83f482b0Ce45C56a40F97cdD2B2F",
+    "0x2DA235784Cb0283219709986916DD974c454E423",
     wBNB.address
   );
   await deSwapRouter.deployed();
