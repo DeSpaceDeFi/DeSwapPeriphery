@@ -14,11 +14,16 @@ module.exports = {
       url: process.env.POLY_URL,
       accounts: [process.env.PK],
     },
+    bscTest: {
+      url: process.env.BSC_TEST,
+      accounts: [process.env.PK],
+    },
   },
 
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      bscTestnet: process.env.BSC_KEY,
     },
   },
 
