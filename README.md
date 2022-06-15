@@ -9,3 +9,5 @@ Router:
 https://testnet.bscscan.com/address/0xE9b04Bd34B07BB852F508d24b2D219c8ed2e9212#code
 
 https://mumbai.polygonscan.com/address/0xc9568a74B869feE692389497E43eb77C6d354332#code
+
+https://www.cubescan.network/en-us/address/0xa0ead99f785f09ceb1607cef27181cedcecaa4c6?tab=Contract
