@@ -14,18 +14,20 @@ module.exports = {
     //     url: process.env.POLY_URL,
     //     accounts: [process.env.PK],
     //   },
-    bscTest: {
-      url: "https://polygon-mumbai.g.alchemy.com/v2/jJ8kBo7IX5xPKKguoF4ziqJ1xhV0BlJu",
-      accounts: [process.env.PK],
+    polygon: {
+      url: process.env.POLY_URL,
+      accounts: [process.env.PK_MAIN],
     },
   },
 
-  // etherscan: {
-  //   apiKey: {
-  //     //polygonMumbai: process.env.POLYGONSCAN_API_KEY,
-  //     //bscTestnet: process.env.BSC_KEY,
-  //   },
-  // },
+  etherscan: {
+    //{
+    apiKey:
+      //polygonMumbai:
+      process.env.POLYGONSCAN_API_KEY,
+    //bsc: process.env.BSC_KEY,
+    //},
+  },
 
   solidity: {
     compilers: [
