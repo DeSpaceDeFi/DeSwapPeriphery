@@ -2,6 +2,7 @@ pragma solidity =0.6.6;
 
 import "./interfaces/IERC20.sol";
 import "./libraries/SafeMath.sol";
+import "./libraries/TransferHelper.sol";
 
 interface IDeSwapRouter {
     function addLiquidityETH(
@@ -339,6 +340,7 @@ library PancakeLibrary {
 }
 
 contract DeSwapMigrator {
+    using SafeMath for uint256;
     IPancakeFactory immutable psf;
     IPancakeRouter immutable psr;
     IDeSwapRouter immutable dsr;
@@ -397,7 +399,7 @@ contract DeSwapMigrator {
         IERC20 token_ = IERC20(_token);
         if (token_.allowance(address(this), address(psr)) < amountToken) {
             uint256 supply = token_.totalSupply();
-            token_.approve(address(psr), supply);
+            token_.approve(address(dsr), supply);
         }
 
         (uint256 tokenSent, uint256 bnbSent, uint256 liquidity) = dsr
@@ -409,6 +411,15 @@ contract DeSwapMigrator {
             msg.sender,
             block.timestamp
         );
+
+        if (amountToken > tokenSent) {
+            uint256 balToken = amountToken.sub(tokenSent);
+            TransferHelper.safeTransfer(token, msg.sender, balToken);
+        }
+        if (amountBNB > bnbSent) {
+            uint256 balETH = amountBNB.sub(bnbSent);
+            TransferHelper.safeTransferETH(msg.sender, balETH);
+        }
 
         address dslp = dsf.getPair(_token, psr.WETH());
         emit Migration(msg.sender, _token, dslp, tokenSent, bnbSent, liquidity);

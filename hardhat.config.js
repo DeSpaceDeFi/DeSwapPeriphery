@@ -1,32 +1,35 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-ethers");
 require("dotenv").config();
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+  defaultNetwork: "hardhat",
   networks: {
-    //   hardhat: {
-    //     saveDeployments: false,
-    //   },
-    //   polygonMumbai: {
-    //     url: process.env.POLY_URL,
-    //     accounts: [process.env.PK],
-    //   },
-    polygon: {
-      url: process.env.POLY_URL,
+    hardhat: {
+      saveDeployments: false,
+      allowUnlimitedContractSize: true,
+      forking: {
+        url: process.env.BSC_URL,
+        blockNumber: 20358018,
+      },
+    },
+
+    bsc: {
+      url: process.env.BSC_URL,
       accounts: [process.env.PK_MAIN],
     },
   },
 
   etherscan: {
-    //{
-    apiKey:
-      //polygonMumbai:
-      process.env.POLYGONSCAN_API_KEY,
-    //bsc: process.env.BSC_KEY,
-    //},
+    //apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      bsc: process.env.BSC_KEY,
+    },
   },
 
   solidity: {

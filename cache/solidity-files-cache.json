@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/DeSwapMigrator.sol": {
-      "lastModificationDate": 1654944873351,
-      "contentHash": "122c8a8d507bab6bde47f02b81749e49",
+      "lastModificationDate": 1660252151088,
+      "contentHash": "bd12ed0e3e6d80a40c06df988d7ad97d",
       "sourceName": "contracts/DeSwapMigrator.sol",
       "solcConfig": {
         "version": "0.6.6",
@@ -30,7 +30,8 @@
       },
       "imports": [
         "./interfaces/IERC20.sol",
-        "./libraries/SafeMath.sol"
+        "./libraries/SafeMath.sol",
+        "./libraries/TransferHelper.sol"
       ],
       "versionPragmas": [
         "=0.6.6"
@@ -116,8 +117,8 @@
       ]
     },
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/libraries/UniswapV2LiquidityMathLibrary.sol": {
-      "lastModificationDate": 1645116376842,
-      "contentHash": "ff4345b5db079741e28bc593d0356893",
+      "lastModificationDate": 1659391152333,
+      "contentHash": "056dc88b7d651a179afc5a84433fbf65",
       "sourceName": "contracts/libraries/UniswapV2LiquidityMathLibrary.sol",
       "solcConfig": {
         "version": "0.6.6",
@@ -148,7 +149,7 @@
         "@uniswap/lib/contracts/libraries/Babylonian.sol",
         "@uniswap/lib/contracts/libraries/FullMath.sol",
         "./SafeMath.sol",
-        "./UniswapV2Library.sol"
+        "./DeSwapLibrary.sol"
       ],
       "versionPragmas": [
         ">=0.5.0"
@@ -297,44 +298,6 @@
         "FullMath"
       ]
     },
-    "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/libraries/UniswapV2Library.sol": {
-      "lastModificationDate": 1655380606409,
-      "contentHash": "8f212e6b1271c62674f2cd0ce3af5f6a",
-      "sourceName": "contracts/libraries/UniswapV2Library.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 800
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol",
-        "./SafeMath.sol"
-      ],
-      "versionPragmas": [
-        ">=0.5.0"
-      ],
-      "artifacts": [
-        "UniswapV2Library"
-      ]
-    },
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/libraries/UniswapV2OracleLibrary.sol": {
       "lastModificationDate": 1645116376843,
       "contentHash": "6375842b01002cf7b8f7899b01c5e8c8",
@@ -448,8 +411,8 @@
       ]
     },
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/DeSwapRouter.sol": {
-      "lastModificationDate": 1649280493822,
-      "contentHash": "af005a9f35c5633134ed41e8fb2f1e9b",
+      "lastModificationDate": 1659793831965,
+      "contentHash": "f13f02028aac0c1f88ed26cadcc14362",
       "sourceName": "contracts/DeSwapRouter.sol",
       "solcConfig": {
         "version": "0.6.6",
@@ -478,7 +441,7 @@
         "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol",
         "@uniswap/lib/contracts/libraries/TransferHelper.sol",
         "./interfaces/IUniswapV2Router02.sol",
-        "./libraries/UniswapV2Library.sol",
+        "./libraries/DeSwapLibrary.sol",
         "./libraries/SafeMath.sol",
         "./interfaces/IERC20.sol",
         "./interfaces/IWETH.sol"
@@ -1135,6 +1098,79 @@
       ],
       "artifacts": [
         "WBNB"
+      ]
+    },
+    "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/libraries/DeSwapLibrary.sol": {
+      "lastModificationDate": 1659899195837,
+      "contentHash": "3a166449d239eb5a0a613be3906c90dd",
+      "sourceName": "contracts/libraries/DeSwapLibrary.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol",
+        "./SafeMath.sol"
+      ],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "DeSwapLibrary"
+      ]
+    },
+    "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1654514530253,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
       ]
     }
   }
