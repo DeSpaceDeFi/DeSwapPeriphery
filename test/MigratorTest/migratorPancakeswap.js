@@ -18,7 +18,6 @@ describe("Migrate from Pancakeswap", () => {
   before(async () => {
     const DeSwapMigrator = await ethers.getContractFactory("DeSwapMigrator");
     const DeSwapRouter = await ethers.getContractFactory("DeSwapRouter");
-    const WBNB = await ethers.getContractFactory("WBNB");
     const DES = await ethers.getContractFactory("DES");
     const panRouter = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
     const panFactory = "0xca143ce32fe78f1f7019d7d551a6402fc5350c73";
@@ -51,13 +50,15 @@ describe("Migrate from Pancakeswap", () => {
   });
 
   it("should migrate properly", async () => {
-    let panLPBal, usdtBal, desLPBal;
+    let panLPBal;
 
     panLPBal = await panLPToken.balanceOf(user.address);
     expect(panLPBal.toString()).to.equal("729626937239924927847");
 
     await panLPToken.connect(user).approve(migrator.address, panLPBal);
 
-    const tx = await expect(migrator.connect(user).migrate(usdtToken.address));
+    await migrator
+      .connect(user)
+      .migrate(usdtToken.address, ethers.utils.parseEther("20"));
   });
 });

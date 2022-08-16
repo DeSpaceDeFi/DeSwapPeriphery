@@ -371,24 +371,25 @@ contract DeSwapMigrator {
     // but it's not possible because it requires a call to the v1 factory, which takes too much gas
     receive() external payable {}
 
-    function migrate(address token) external {
+    function migrate(address token, uint256 amount) external {
         address lp = psf.getPair(token, psr.WETH());
         IERC20 lpToken = IERC20(lp);
         uint256 bal = lpToken.balanceOf(msg.sender);
 
+        require(bal >= amount, "Not enough LP balance");
         require(
-            lpToken.transferFrom(msg.sender, address(this), bal),
+            lpToken.transferFrom(msg.sender, address(this), amount),
             "TRANSFER_FROM_FAILED"
         );
 
-        if (lpToken.allowance(address(this), address(psr)) < bal) {
+        if (lpToken.allowance(address(this), address(psr)) < amount) {
             uint256 supply = lpToken.totalSupply();
             lpToken.approve(address(psr), supply);
         }
 
         (uint256 amountToken, uint256 amountBNB) = psr.removeLiquidityETH(
             token,
-            bal,
+            amount,
             1,
             1,
             address(this),
@@ -397,9 +398,12 @@ contract DeSwapMigrator {
 
         address _token = token;
         IERC20 token_ = IERC20(_token);
-        if (token_.allowance(address(this), address(psr)) < amountToken) {
+
+        uint256 allow = token_.allowance(address(this), address(dsr));
+
+        if (allow < amountToken) {
             uint256 supply = token_.totalSupply();
-            token_.approve(address(dsr), supply);
+            TransferHelper.safeApprove(_token, address(dsr), supply);
         }
 
         (uint256 tokenSent, uint256 bnbSent, uint256 liquidity) = dsr

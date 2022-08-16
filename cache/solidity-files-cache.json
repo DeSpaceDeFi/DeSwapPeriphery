@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/DeSwapMigrator.sol": {
-      "lastModificationDate": 1660252151088,
-      "contentHash": "bd12ed0e3e6d80a40c06df988d7ad97d",
+      "lastModificationDate": 1660648700970,
+      "contentHash": "1c813b1535058eeb6c9efd33f6611531",
       "sourceName": "contracts/DeSwapMigrator.sol",
       "solcConfig": {
         "version": "0.6.6",
@@ -1065,41 +1065,6 @@
         "Faucet"
       ]
     },
-    "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/WBNB.sol": {
-      "lastModificationDate": 1655144419384,
-      "contentHash": "ec6add9307cd0724224d0449e173c27f",
-      "sourceName": "contracts/WBNB.sol",
-      "solcConfig": {
-        "version": "0.6.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 800
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "=0.6.6"
-      ],
-      "artifacts": [
-        "WBNB"
-      ]
-    },
     "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/libraries/DeSwapLibrary.sol": {
       "lastModificationDate": 1659899195837,
       "contentHash": "3a166449d239eb5a0a613be3906c90dd",
@@ -1171,6 +1136,41 @@
       ],
       "artifacts": [
         "console"
+      ]
+    },
+    "/Users/hendobox/Desktop/THE GRIND/Blockchain Dev/projects/DeSwapPeriphery/contracts/tests/WBNB.sol": {
+      "lastModificationDate": 1660567060964,
+      "contentHash": "ec6add9307cd0724224d0449e173c27f",
+      "sourceName": "contracts/tests/WBNB.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "=0.6.6"
+      ],
+      "artifacts": [
+        "WBNB"
       ]
     }
   }
