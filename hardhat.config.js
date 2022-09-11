@@ -16,22 +16,30 @@ module.exports = {
         //url: process.env.BSC_URL,
         //url: process.env.POLY_URL,
         url: process.env.MAINNET_URL,
-        blockNumber: 15352098,
+        blockNumber: 15441170,
       },
+    },
+    mainnet: {
+      url: process.env.MAINNET_URL,
+      accounts: [process.env.PK_MAIN],
     },
 
     bsc: {
-      url: process.env.BSC_URL,
+      url: process.env.BSC,
+      accounts: [process.env.PK_MAIN],
+    },
+    polygon: {
+      url: process.env.POLY_URL,
       accounts: [process.env.PK_MAIN],
     },
   },
 
   etherscan: {
-    //apiKey: process.env.ETHERSCAN_API_KEY,
-    apiKey: {
-      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
-      bsc: process.env.BSC_KEY,
-    },
+    apiKey: process.env.ETHERSCAN_API_KEY,
+    // apiKey: {
+    //   polygon: process.env.POLYGONSCAN_API_KEY,
+    //   bsc: process.env.BSC_KEY,
+    // },
   },
 
   solidity: {
