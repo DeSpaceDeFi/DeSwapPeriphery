@@ -1,10 +1,28 @@
 pragma solidity =0.6.6;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IERC20.sol";
 import "./libraries/SafeMath.sol";
 import "./libraries/TransferHelper.sol";
 
 interface IDeSwapRouter {
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    )
+        external
+        returns (
+            uint256 amountA,
+            uint256 amountB,
+            uint256 liquidity
+        );
+
     function addLiquidityETH(
         address token,
         uint256 amountTokenDesired,
@@ -173,6 +191,23 @@ interface IPancakeRouter {
 
     function WETH() external pure returns (address);
 
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    )
+        external
+        returns (
+            uint256 amountA,
+            uint256 amountB,
+            uint256 liquidity
+        );
+
     function addLiquidityETH(
         address token,
         uint256 amountTokenDesired,
@@ -188,6 +223,16 @@ interface IPancakeRouter {
             uint256 amountETH,
             uint256 liquidity
         );
+
+    function removeLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountA, uint256 amountB);
 
     function removeLiquidityETH(
         address token,
@@ -339,12 +384,14 @@ library PancakeLibrary {
     }
 }
 
-contract DeSwapMigrator {
+contract DeSwapMigrator is Ownable {
     using SafeMath for uint256;
     IPancakeFactory immutable psf;
-    IPancakeRouter immutable psr;
+    IPancakeRouter private psr;
     IDeSwapRouter immutable dsr;
     IDeSwapFactory immutable dsf;
+
+    mapping(address => bool) private _isWhitelistedToken;
 
     event Migration(
         address indexed user,
@@ -355,24 +402,76 @@ contract DeSwapMigrator {
         uint256 liquidity
     );
 
+    event Migration_(
+        address indexed user,
+        address indexed tokenA,
+        address tokenB,
+        address indexed deSwapLP,
+        uint256 tokenASent,
+        uint256 tokenBSent,
+        uint256 liquidity
+    );
+
+    event Whitelist(address indexed tkn, bool indexed whitelist);
+
     constructor(
         address _pancakeFactoryV2,
         address _pancakeRouterV2,
         address _deSwapRouter,
         address _deSwapFactory
-    ) public {
+    ) public Ownable() {
         psf = IPancakeFactory(_pancakeFactoryV2);
         psr = IPancakeRouter(_pancakeRouterV2);
         dsf = IDeSwapFactory(_deSwapFactory);
         dsr = IDeSwapRouter(_deSwapRouter);
+
+        _whitelist(psr.WETH(), true);
     }
 
     // needs to accept ETH from any v1 exchange and the router. ideally this could be enforced, as in the router,
     // but it's not possible because it requires a call to the v1 factory, which takes too much gas
     receive() external payable {}
 
-    function migrate(address token, uint256 amount) external {
-        address lp = psf.getPair(token, psr.WETH());
+    modifier onlyThis(address token, bool whitelist) {
+        bool whitelisted = _isWhitelistedToken[token];
+        if (whitelist) require(!whitelisted, "already whitelisted");
+        else require(whitelisted, "already not listed");
+        _;
+    }
+
+    modifier onlyThat(address tokenA, address tokenB) {
+        require(tokenA != tokenB, "duplicat token address");
+        bool whitelistedA = _isWhitelistedToken[tokenA];
+        bool whitelistedB = _isWhitelistedToken[tokenB];
+        require(whitelistedA || whitelistedB, "only whitelisted pair");
+        _;
+    }
+
+    function batchWhitelist(address[] calldata tokens, bool whitelist)
+        external
+        onlyOwner
+    {
+        uint256 len = tokens.length;
+        for (uint256 i; i < len; i++) {
+            address tkn = tokens[i];
+            _whitelist(tkn, whitelist);
+        }
+    }
+
+    function _whitelist(address tkn, bool whitelist)
+        private
+        onlyThis(tkn, whitelist)
+    {
+        _isWhitelistedToken[tkn] = whitelist;
+        emit Whitelist(tkn, whitelist);
+    }
+
+    function migrate(
+        address tokenA,
+        address tokenB,
+        uint256 amount
+    ) external onlyThat(tokenA, tokenB) {
+        address lp = psf.getPair(tokenA, tokenB);
         IERC20 lpToken = IERC20(lp);
         uint256 bal = lpToken.balanceOf(msg.sender);
 
@@ -387,6 +486,16 @@ contract DeSwapMigrator {
             lpToken.approve(address(psr), supply);
         }
 
+        if (tokenA == psr.WETH()) {
+            _resolveWithETH(tokenB, amount);
+        } else if (tokenB == psr.WETH()) {
+            _resolveWithETH(tokenA, amount);
+        } else {
+            _resolveWithoutETH(tokenA, tokenB, amount);
+        }
+    }
+
+    function _resolveWithETH(address token, uint256 amount) private {
         (uint256 amountToken, uint256 amountBNB) = psr.removeLiquidityETH(
             token,
             amount,
@@ -396,19 +505,18 @@ contract DeSwapMigrator {
             block.timestamp
         );
 
-        address _token = token;
-        IERC20 token_ = IERC20(_token);
+        IERC20 token_ = IERC20(token);
 
         uint256 allow = token_.allowance(address(this), address(dsr));
 
         if (allow < amountToken) {
             uint256 supply = token_.totalSupply();
-            TransferHelper.safeApprove(_token, address(dsr), supply);
+            TransferHelper.safeApprove(token, address(dsr), supply);
         }
 
         (uint256 tokenSent, uint256 bnbSent, uint256 liquidity) = dsr
             .addLiquidityETH{value: amountBNB}(
-            _token,
+            token,
             amountToken,
             0,
             0,
@@ -425,7 +533,61 @@ contract DeSwapMigrator {
             TransferHelper.safeTransferETH(msg.sender, balETH);
         }
 
-        address dslp = dsf.getPair(_token, psr.WETH());
-        emit Migration(msg.sender, _token, dslp, tokenSent, bnbSent, liquidity);
+        address dslp = dsf.getPair(token, psr.WETH());
+        emit Migration(msg.sender, token, dslp, tokenSent, bnbSent, liquidity);
+    }
+
+    function _resolveWithoutETH(
+        address tokenA,
+        address tokenB,
+        uint256 amount
+    ) private {
+        (uint256 amountTokenA, uint256 amountTokenB) = psr.removeLiquidity(
+            tokenA,
+            tokenB,
+            amount,
+            1,
+            1,
+            address(this),
+            block.timestamp
+        );
+
+        IERC20 tokenA_ = IERC20(tokenA);
+        IERC20 tokenB_ = IERC20(tokenB);
+
+        uint256 allowA = tokenA_.allowance(address(this), address(dsr));
+        uint256 allowB = tokenB_.allowance(address(this), address(dsr));
+
+        if (allowA < amountTokenA) {
+            uint256 supply = tokenA_.totalSupply();
+            TransferHelper.safeApprove(tokenA, address(dsr), supply);
+        }
+        if (allowB < amountTokenB) {
+            uint256 supply = tokenB_.totalSupply();
+            TransferHelper.safeApprove(tokenB, address(dsr), supply);
+        }
+
+        (uint256 tokenASent, uint256 tokenBSent, uint256 liquidity) = dsr
+            .addLiquidity(
+                tokenA,
+                tokenB,
+                amountTokenA,
+                amountTokenB,
+                0,
+                0,
+                msg.sender,
+                block.timestamp
+            );
+
+        address dslp = dsf.getPair(tokenA, tokenB);
+        emit Migration_(
+            msg.sender,
+            tokenA,
+            tokenB,
+            dslp,
+            tokenASent,
+            tokenBSent,
+            liquidity
+        );
     }
 }

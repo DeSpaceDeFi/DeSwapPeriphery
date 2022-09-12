@@ -20,8 +20,8 @@ https://etherscan.io/address/0x9D555D668A774C0919E4c53AE9ab6Eb10d1116ce#code
 
 Migrator:
 
-Pancakeswap https://bscscan.com/address/0x946C92D44B55B974880fc5f0C4034a3062a48c66#code
+Pancakeswap https://bscscan.com/address/0x16e30B095Ed9b26e6a747e6F16b850eb21284Bff#code
 
-Quickswap https://polygonscan.com/address/0xa333553B8d6e739851D6c71e508b9e079A82DEeb#code
+Quickswap https://polygonscan.com/address/0x0Ae101b8F23838daF730fB7e696a01a191C65Ee0#code
 
-Uniswap V2 https://etherscan.io/address/0x42E1F710362eCB49f0b26E2AeB8068Dc65688EC2#code
+Uniswap V2 https://etherscan.io/address/0xE037d12345dA559C2Ed052Bc67545e967b8639bA#code
